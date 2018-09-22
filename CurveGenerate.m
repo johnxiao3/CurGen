@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 21-Sep-2018 21:00:51
+% Last Modified by GUIDE v2.5 21-Sep-2018 23:12:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -44,6 +44,8 @@ end
 % End initialization code - DO NOT EDIT
 
 
+
+
 % --- Executes just before CurveGenerate is made visible.
 function CurveGenerate_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -57,6 +59,9 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+
+xlim([0 str2num(get(handles.e_Xmax,'String'))]);
+ylim([0 str2num(get(handles.e_Ymax,'String'))]);
 
 % UIWAIT makes CurveGenerate wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -82,12 +87,11 @@ function axes_main_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate axes_main
 xlabel('X');
 ylabel('Y');
+
 %set(gcf, 'WindowButtonMotionFcn', @mouseMove);
 
-function mouseMove(hObject, eventdata,handles)
-C = get (gca, 'CurrentPoint');
-set(handles.e_X,'String','909');
-set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));
+
+
 %title(gca, ['(X,Y) = (', num2str(C(1,1)), ', ',num2str(C(1,2)), ')']);
 
 function e_X_Callback(hObject, eventdata, handles)
@@ -158,11 +162,49 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pb_Add.
-function pb_Add_Callback(hObject, eventdata, handles)
-% hObject    handle to pb_Add (see GCBO)
+% --- Executes on button press in pb_PEN.
+function pb_PEN_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_PEN (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.pen_drawing = 1;
+guidata(hObject,handles);
+
+axes(handles.axes_main)
+hold on;
+iptPointerManager(gcf, 'enable');
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'cross'));
+while handles.pen_drawing == 1
+    C = get(gca, 'CurrentPoint');
+    curX = C(1,1);
+    curY = C(1,2);
+    x_lim = xlim;
+    y_lim = ylim;
+    if curX < x_lim(2) && curX > x_lim(1) && curY > y_lim(1) && curY < y_lim(2)
+        set(handles.e_X,'String',num2str(curX,'%.2f'));
+        set(handles.e_Y,'String',num2str(curY,'%.2f'));
+    end
+%     try
+%         delete(handles.preLine);
+%     catch
+%     end
+    try
+        handles = guidata(hObject);
+        preX = handles.preX;
+        preY = handles.preY;
+    catch
+        preX = 0;
+        preY = 0;
+    end
+    %handles.preLine = plot([preX curX],[preY curY],'r-','LineWidth',1.5);
+    drawnow;
+    pause(0.2)
+    handles = guidata(hObject);
+end
+
+% set(gca,'pointer','cross');
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -178,9 +220,9 @@ function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-C = get (gca, 'CurrentPoint');
-set(handles.e_X,'String',num2str(C(1,1),'%.2f'));
-set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));
+% C = get (gca, 'CurrentPoint');
+% set(handles.e_X,'String',num2str(C(1,1),'%.2f'));
+% set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));
 
 
 % --- Executes on button press in pb_pick.
@@ -188,3 +230,93 @@ function pb_pick_Callback(hObject, eventdata, handles)
 % hObject    handle to pb_pick (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton3.
+function pushbutton3_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on mouse press over axes background.
+function axes_main_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to axes_main (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+try
+    pen_drawing = handles.pen_drawing;
+catch
+    pen_drawing = 0;
+end
+type = get(gcf,'SelectionType');
+
+if pen_drawing == 1
+    if strcmp(type,'normal')
+        axes(handles.axes_main);hold on;
+        C = get (gca, 'CurrentPoint');
+        X = C(1,1); Y = C(1,2);
+        plot(X,Y,'.r','MarkerSize',15);
+        try
+            preX = handles.preX;
+            preY = handles.preY;
+        catch
+            preX = 0;
+            preY = 0;
+        end
+        plot([preX X],[preY Y],'r-','LineWidth',1.5);
+        handles.preX = X;
+        handles.preY = Y;
+        
+        guidata(hObject,handles);
+    elseif strcmp(type,'alt') % right click
+        handles.pen_drawing = 0;
+        guidata(hObject,handles);
+    end
+end
+
+
+
+function e_Ymax_Callback(hObject, eventdata, handles)
+% hObject    handle to e_Ymax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_Ymax as text
+%        str2double(get(hObject,'String')) returns contents of e_Ymax as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function e_Ymax_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_Ymax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function e_Xmax_Callback(hObject, eventdata, handles)
+% hObject    handle to e_Xmax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_Xmax as text
+%        str2double(get(hObject,'String')) returns contents of e_Xmax as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function e_Xmax_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_Xmax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
