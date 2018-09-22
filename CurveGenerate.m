@@ -264,10 +264,8 @@ type = get(gcf,'SelectionType');
 if pen_drawing == 1
     if strcmp(type,'normal')
         axes(handles.axes_main);hold on;
-        %C = get (gca, 'CurrentPoint');
         X = str2num(get(handles.e_X,'String'));
         Y = str2num(get(handles.e_Y,'String'));
-        
         try
             preX = handles.preX;
             preY = handles.preY;
@@ -285,6 +283,13 @@ if pen_drawing == 1
             handles.pointTable{handles.lineIndex,3} = 'Linear';
             handles.lineIndex = handles.lineIndex + 1;
             set(handles.table_XY,'Data',handles.pointTable);
+            
+            Xmax = str2num(get(handles.e_Xmax,'String'));
+            if  Xmax - X <= 1
+                Xmax = Xmax + 5; 
+                set(handles.e_Xmax,'String',num2str(Xmax));
+                xlim([0 Xmax]);
+            end
         end
         guidata(hObject,handles);
     elseif strcmp(type,'alt') % right click
@@ -360,6 +365,7 @@ else
 end
 endX = handles.pointTable{row,1};
 endY = handles.pointTable{row,2};
-handles.curSel = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+handles.curSel(1) = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15)
 guidata(hObject,handles);
 
