@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 21-Sep-2018 23:12:23
+% Last Modified by GUIDE v2.5 22-Sep-2018 09:45:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -87,7 +87,7 @@ function axes_main_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate axes_main
 xlabel('X');
 ylabel('Y');
-
+grid on;
 %set(gcf, 'WindowButtonMotionFcn', @mouseMove);
 
 
@@ -168,6 +168,8 @@ function pb_PEN_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.pen_drawing = 1;
+handles.lineIndex = 1;
+handles.poinTable = [];
 guidata(hObject,handles);
 
 axes(handles.axes_main)
@@ -181,6 +183,12 @@ while handles.pen_drawing == 1
     x_lim = xlim;
     y_lim = ylim;
     if curX < x_lim(2) && curX > x_lim(1) && curY > y_lim(1) && curY < y_lim(2)
+        if abs(curX-0.5*round(curX/0.5))<0.03
+            curX = 0.5*round(curX/0.5);
+        end
+        if abs(curY-0.5*round(curY/0.5))<0.03
+            curY = 0.5*round(curY/0.5);
+        end
         set(handles.e_X,'String',num2str(curX,'%.2f'));
         set(handles.e_Y,'String',num2str(curY,'%.2f'));
     end
@@ -254,9 +262,10 @@ type = get(gcf,'SelectionType');
 if pen_drawing == 1
     if strcmp(type,'normal')
         axes(handles.axes_main);hold on;
-        C = get (gca, 'CurrentPoint');
-        X = C(1,1); Y = C(1,2);
-        plot(X,Y,'.r','MarkerSize',15);
+        %C = get (gca, 'CurrentPoint');
+        X = str2num(get(handles.e_X,'String'));
+        Y = str2num(get(handles.e_Y,'String'));
+        
         try
             preX = handles.preX;
             preY = handles.preY;
@@ -264,10 +273,17 @@ if pen_drawing == 1
             preX = 0;
             preY = 0;
         end
-        plot([preX X],[preY Y],'r-','LineWidth',1.5);
-        handles.preX = X;
-        handles.preY = Y;
-        
+        if X >= preX
+            handles.Lines(handles.lineIndex,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
+            handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);            
+            handles.preX = X;
+            handles.preY = Y;
+            handles.pointTable{handles.lineIndex,1} = X;
+            handles.pointTable{handles.lineIndex,2} = Y;
+            handles.pointTable{handles.lineIndex,3} = 'Linear';
+            handles.lineIndex = handles.lineIndex + 1;
+            set(handles.table_XY,'Data',handles.pointTable);
+        end
         guidata(hObject,handles);
     elseif strcmp(type,'alt') % right click
         handles.pen_drawing = 0;
@@ -320,3 +336,28 @@ function e_Xmax_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes when selected cell(s) is changed in table_XY.
+function table_XY_CellSelectionCallback(hObject, eventdata, handles)
+% hObject    handle to table_XY (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) currently selecteds
+% handles    structure with handles and user data (see GUIDATA)
+try
+    delete(handles.curSel);
+catch
+end
+row = eventdata.Indices(1);
+axes(handles.axes_main);
+if row ==1
+    starX = 0;starY = 0;
+else
+    starX = handles.pointTable{row-1,1};
+    starY = handles.pointTable{row-1,2};
+end
+endX = handles.pointTable{row,1};
+endY = handles.pointTable{row,2};
+handles.curSel = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+guidata(hObject,handles);
+
