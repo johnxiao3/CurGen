@@ -174,7 +174,9 @@ guidata(hObject,handles);
 
 axes(handles.axes_main)
 hold on;
+% set(gcf,'pointer','watch');
 iptPointerManager(gcf, 'enable');
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'watch'));
 iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'cross'));
 while handles.pen_drawing == 1
     C = get(gca, 'CurrentPoint');
@@ -212,7 +214,7 @@ end
 
 % set(gca,'pointer','cross');
 iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
-
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
 
 
 % --- Executes during object creation, after setting all properties.
