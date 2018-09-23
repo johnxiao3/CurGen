@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 22-Sep-2018 19:50:40
+% Last Modified by GUIDE v2.5 22-Sep-2018 22:51:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -386,7 +386,20 @@ else
 end
 endX = handles.pointTable{row,1};
 endY = handles.pointTable{row,2};
-handles.curSel(1) = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+formular = handles.pointTable{row,3};
+if strcmp(formular,'Linear')
+    handles.curSel(1) = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+else
+    f = inline(formular,'x');
+    x = starX:0.1:endX;
+    try
+        y = feval(f,x) + starY - feval(f,starX);
+    catch
+        msgbox('formular error !');
+        return;
+    end
+    handles.curSel(1) = plot(x,y,'b-','LineWidth',1.5);
+end
 handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15)
 guidata(hObject,handles);
 
@@ -424,3 +437,82 @@ axes(handles.axes_main);
 ylim auto;
 y_lim = ylim;
 set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
+
+
+% --------------------------------------------------------------------
+function pushtool_open_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_open (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file,path] = uigetfile('*.mat');
+if file == 0
+    return;
+end
+load([path file]);
+set(handles.table_XY,'Data',tableData);
+update(hObject, eventdata, handles);
+
+function update(hObject, eventdata, handles)
+tableData = get(handles.table_XY,'Data');
+handles.pointTable = tableData;
+handles.lineIndex = size(tableData,1) + 1;
+handles.preX = tableData{end,1};
+handles.preY = tableData{end,2};
+axes(handles.axes_main);cla;hold on;
+for i = 1:size(tableData,1)
+    formular = tableData{i,3};
+    if i == 1
+        preX = 0; preY = 0;
+    else
+        preX = tableData{i-1,1};
+        preY = tableData{i-1,2};
+    end
+    X = tableData{i,1};
+    Y = tableData{i,2};
+    if strcmp(formular,'Linear')
+        handles.Lines(i,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
+        handles.Points(i,1) = plot(X,Y,'.r','MarkerSize',15);  
+    else
+        f = inline(formular,'x');
+        x = [preX:0.1:X];
+        try
+            y = feval(f,x) + preY - feval(f,preX);
+        catch
+            msgbox('formular error !');
+            return;
+        end
+        Y = y(end);
+        handles.Lines(i,1) = plot(x,y,'r-','LineWidth',1.5);
+        handles.Points(i,1) = plot(X,Y,'.r','MarkerSize',15);  
+    end
+end
+guidata(hObject,handles);
+pb_autoXYscale_Callback(hObject, eventdata, handles)
+
+
+% --------------------------------------------------------------------
+function pushtool_save_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_save (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file,path] = uiputfile('*.mat');
+if file == 0
+    return;
+end
+tableData = get(handles.table_XY,'Data');
+save([path file],'tableData');
+
+
+% --- Executes on button press in pb_autoXYscale.
+function pb_autoXYscale_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_autoXYscale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+axes(handles.axes_main);
+ylim auto;
+y_lim = ylim;
+set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
+
+xlim auto;
+x_lim = xlim;
+set(handles.e_Xmax,'String',num2str(x_lim(2),'%.2f'));
