@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 22-Sep-2018 22:51:46
+% Last Modified by GUIDE v2.5 23-Sep-2018 13:50:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,11 +58,18 @@ function CurveGenerate_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 
 % Update handles structure
-guidata(hObject, handles);
 
 xlim([0 str2num(get(handles.e_Xmax,'String'))]);
 ylim([0 str2num(get(handles.e_Ymax,'String'))]);
 
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+jFrame=get(handle(handles.figure1), 'javaframe');
+jicon=javax.swing.ImageIcon('smart.png');
+jFrame.setFigureIcon(jicon);
+
+handles.lineIndex = 1;
+handles.pen_drawing = 0;
+guidata(hObject, handles);
 % UIWAIT makes CurveGenerate wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
@@ -162,59 +169,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pb_PEN.
-function pb_PEN_Callback(hObject, eventdata, handles)
-% hObject    handle to pb_PEN (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-handles.pen_drawing = 1;
-% handles.lineIndex = 1;
-% handles.poinTable = [];
-guidata(hObject,handles);
 
-axes(handles.axes_main)
-hold on;
-% set(gcf,'pointer','watch');
-iptPointerManager(gcf, 'enable');
-iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'watch'));
-iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'cross'));
-while handles.pen_drawing == 1
-    C = get(gca, 'CurrentPoint');
-    curX = C(1,1);
-    curY = C(1,2);
-    x_lim = xlim;
-    y_lim = ylim;
-    if curX < x_lim(2) && curX > x_lim(1) && curY > y_lim(1) && curY < y_lim(2)
-        if abs(curX-0.5*round(curX/0.5))<0.03
-            curX = 0.5*round(curX/0.5);
-        end
-        if abs(curY-0.5*round(curY/0.5))<0.03
-            curY = 0.5*round(curY/0.5);
-        end
-        set(handles.e_X,'String',num2str(curX,'%.2f'));
-        set(handles.e_Y,'String',num2str(curY,'%.2f'));
-    end
-%     try
-%         delete(handles.preLine);
-%     catch
-%     end
-    try
-        handles = guidata(hObject);
-        preX = handles.preX;
-        preY = handles.preY;
-    catch
-        preX = 0;
-        preY = 0;
-    end
-    %handles.preLine = plot([preX curX],[preY curY],'r-','LineWidth',1.5);
-    drawnow;
-    pause(0.2)
-    handles = guidata(hObject);
-end
-
-% set(gca,'pointer','cross');
-iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
-iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
 
 
 % --- Executes during object creation, after setting all properties.
@@ -234,38 +189,13 @@ function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
 % set(handles.e_X,'String',num2str(C(1,1),'%.2f'));
 % set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));
 
-
-% --- Executes on button press in pb_pick.
-function pb_pick_Callback(hObject, eventdata, handles)
-% hObject    handle to pb_pick (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
 % --- Executes on mouse press over axes background.
 function axes_main_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to axes_main (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    handles.lineIndex = handles.lineIndex;
-catch
-    handles.lineIndex = 1;
-end
-try
-    pen_drawing = handles.pen_drawing;
-catch
-    pen_drawing = 0;
-end
+pen_drawing = handles.pen_drawing;
 type = get(gcf,'SelectionType');
-
 if pen_drawing == 1
     if strcmp(type,'normal')
         axes(handles.axes_main);hold on;
@@ -317,6 +247,24 @@ if pen_drawing == 1
         handles.pen_drawing = 0;
         guidata(hObject,handles);
     end
+elseif pen_drawing == 0
+    try
+        pointTable = handles.pointTable;
+    catch
+        return;
+    end
+    C = get(gca, 'CurrentPoint');
+    curX = C(1,1);
+    for i = 1:size(pointTable,1)
+        if curX <= pointTable{i,1}
+            row = i;
+            break;
+        end
+    end
+    
+    jUIScrollPane = findjobj(handles.table_XY);
+    jUITable = jUIScrollPane.getViewport.getView;
+    jUITable.changeSelection(row-1,0, false, false);
 end
 
 
@@ -400,7 +348,7 @@ else
     end
     handles.curSel(1) = plot(x,y,'b-','LineWidth',1.5);
 end
-handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15)
+handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15);
 guidata(hObject,handles);
 
 
@@ -451,6 +399,7 @@ end
 load([path file]);
 set(handles.table_XY,'Data',tableData);
 update(hObject, eventdata, handles);
+pb_autoXYscale_Callback(hObject, eventdata, handles);
 
 function update(hObject, eventdata, handles)
 tableData = get(handles.table_XY,'Data');
@@ -487,7 +436,7 @@ for i = 1:size(tableData,1)
     end
 end
 guidata(hObject,handles);
-pb_autoXYscale_Callback(hObject, eventdata, handles)
+
 
 
 % --------------------------------------------------------------------
@@ -510,9 +459,88 @@ function pb_autoXYscale_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 axes(handles.axes_main);
 ylim auto;
-y_lim = ylim;
-set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
-
 xlim auto;
+
+y_lim = ylim;
 x_lim = xlim;
+set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
 set(handles.e_Xmax,'String',num2str(x_lim(2),'%.2f'));
+
+
+% --------------------------------------------------------------------
+function pushtool_pen_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_pen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% hObject    handle to pb_PEN (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.pen_drawing = 1;
+% handles.lineIndex = 1;
+% handles.poinTable = [];
+guidata(hObject,handles);
+
+axes(handles.axes_main)
+hold on;
+% set(gcf,'pointer','watch');
+iptPointerManager(gcf, 'enable');
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'watch'));
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'cross'));
+
+set(handles.pushtool_confirm,'Visible','On');
+while handles.pen_drawing == 1
+    C = get(gca, 'CurrentPoint');
+    curX = C(1,1);
+    curY = C(1,2);
+    x_lim = xlim;
+    y_lim = ylim;
+    if curX < x_lim(2) && curX > x_lim(1) && curY > y_lim(1) && curY < y_lim(2)
+        if abs(curX-0.5*round(curX/0.5))<0.03
+            curX = 0.5*round(curX/0.5);
+        end
+        if abs(curY-0.5*round(curY/0.5))<0.03
+            curY = 0.5*round(curY/0.5);
+        end
+        set(handles.e_X,'String',num2str(curX,'%.2f'));
+        set(handles.e_Y,'String',num2str(curY,'%.2f'));
+    end
+%     try
+%         delete(handles.preLine);
+%     catch
+%     end
+    try
+        handles = guidata(hObject);
+        preX = handles.preX;
+        preY = handles.preY;
+    catch
+        preX = 0;
+        preY = 0;
+    end
+    %handles.preLine = plot([preX curX],[preY curY],'r-','LineWidth',1.5);
+    drawnow;
+    pause(0.2)
+    handles = guidata(hObject);
+end
+
+% set(gca,'pointer','cross');
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
+
+
+% --------------------------------------------------------------------
+function pushtool_confirm_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_confirm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.pen_drawing = 0;
+guidata(hObject,handles);
+set(hObject,'Visible','off');
+
+
+
+% --------------------------------------------------------------------
+function pushtool_setting_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_setting (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set = serialSetDialog
