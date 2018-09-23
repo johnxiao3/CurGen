@@ -1,4 +1,4 @@
-function serialSet = serialSetDialog
+function serialSet = serialSetDialog(serials)
 
 
     win_h = 270;
@@ -18,8 +18,8 @@ function serialSet = serialSetDialog
      popup_port = uicontrol('Parent',d,...
            'Style','popup',...
            'Position',[offsetX+170 win_h-42 80 25],...
-           'String',{'COM1';'COM2';'COM3'},...
-           'Callback',@popup_callback);
+           'String',serials,...
+           'Callback',@popup_port_callback);
        
      txt_bitsSec = uicontrol('Parent',d,...
            'Style','text',...
@@ -31,7 +31,7 @@ function serialSet = serialSetDialog
            'Style','popup',...
            'Position',[offsetX+170 win_h-42-30 80 25],...
            'String',{'9600';'Green';'Blue'},...
-           'Callback',@popup_callback);  
+           'Callback',@popup_bitSec_callback);  
        
      txt_databit = uicontrol('Parent',d,...
            'Style','text',...
@@ -92,19 +92,28 @@ function serialSet = serialSetDialog
            'String','Cancel',...
            'Callback','delete(gcf)');   
        
-    serialSet = 'Red';
-       
+    idx = popup_port.Value;
+    popup_port_items = popup_port.String;
+    serialSet{1,1} = char(popup_port_items(idx,:));
+    serialSet{1,2} = '9600';
+    serialSet{1,3} = '8';
+    serialSet{1,4} = 'None';
+    serialSet{1,5} = '1';
+    serialSet{1,6} = 'None';
+    
     % Wait for d to close before running to completion
     uiwait(d);
+  
    
-       function popup_callback(popup,event)
-          idx = popup.Value;
-          popup_items = popup.String;
-          % This code uses dot notation to get properties.
-          % Dot notation runs in R2014b and later.
-          % For R2014a and earlier:
-          % idx = get(popup,'Value');
-          % popup_items = get(popup,'String');
-          serialSet = char(popup_items(idx,:));
+       function popup_port_callback(popup,event)
+          idx = popup_port.Value;
+          popup_port_items = popup_port.String;
+          serialSet{1,1} = char(popup_port_items(idx,:));
+       end
+   
+        function popup_bitSec_callback(popup,event)
+          idx = popup_bitSec.Value;
+          popup_bitSec_items = popup_bitSec.String;
+          serialSet{1,2} = char(popup_bitSec_items(idx,:));
        end
 end
