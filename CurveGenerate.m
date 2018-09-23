@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 22-Sep-2018 09:45:24
+% Last Modified by GUIDE v2.5 22-Sep-2018 19:50:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -168,8 +168,8 @@ function pb_PEN_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.pen_drawing = 1;
-handles.lineIndex = 1;
-handles.poinTable = [];
+% handles.lineIndex = 1;
+% handles.poinTable = [];
 guidata(hObject,handles);
 
 axes(handles.axes_main)
@@ -255,6 +255,11 @@ function axes_main_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
+    handles.lineIndex = handles.lineIndex;
+catch
+    handles.lineIndex = 1;
+end
+try
     pen_drawing = handles.pen_drawing;
 catch
     pen_drawing = 0;
@@ -273,14 +278,30 @@ if pen_drawing == 1
             preX = 0;
             preY = 0;
         end
-        if X >= preX
-            handles.Lines(handles.lineIndex,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
-            handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);            
+        if X >= preX    
             handles.preX = X;
             handles.preY = Y;
             handles.pointTable{handles.lineIndex,1} = X;
+            formular = get(handles.e_F,'String');
+            handles.pointTable{handles.lineIndex,3} = formular;
+            if strcmp(formular,'Linear')
+                handles.Lines(handles.lineIndex,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);  
+            else
+                f = inline(formular,'x');
+                x = [preX:0.1:X];
+                try
+                    y = feval(f,x) + preY - feval(f,preX);
+                catch
+                    msgbox('formular error !');
+                    return;
+                end
+                Y = y(end);
+                handles.Lines(handles.lineIndex,1) = plot(x,y,'r-','LineWidth',1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);  
+            end
             handles.pointTable{handles.lineIndex,2} = Y;
-            handles.pointTable{handles.lineIndex,3} = 'Linear';
+            handles.preY = Y;
             handles.lineIndex = handles.lineIndex + 1;
             set(handles.table_XY,'Data',handles.pointTable);
             
@@ -369,3 +390,37 @@ handles.curSel(1) = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
 handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15)
 guidata(hObject,handles);
 
+
+
+
+function e_F_Callback(hObject, eventdata, handles)
+% hObject    handle to e_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_F as text
+%        str2double(get(hObject,'String')) returns contents of e_F as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function e_F_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pb_autoYscale.
+function pb_autoYscale_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_autoYscale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+axes(handles.axes_main);
+ylim auto;
+y_lim = ylim;
+set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
