@@ -22,7 +22,7 @@ function varargout = CurveGenerate(varargin)
 
 % Edit the above text to modify the response to help CurveGenerate
 
-% Last Modified by GUIDE v2.5 23-Sep-2018 13:50:46
+% Last Modified by GUIDE v2.5 23-Sep-2018 16:52:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -276,6 +276,7 @@ function e_Ymax_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of e_Ymax as text
 %        str2double(get(hObject,'String')) returns contents of e_Ymax as a double
+ylim([0 str2num(get(hObject,'String'))]);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -299,6 +300,7 @@ function e_Xmax_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of e_Xmax as text
 %        str2double(get(hObject,'String')) returns contents of e_Xmax as a double
+xlim([0 str2num(get(hObject,'String'))]);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -543,4 +545,118 @@ function pushtool_setting_ClickedCallback(hObject, eventdata, handles)
 % hObject    handle to pushtool_setting (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set = serialSetDialog
+serials = seriallist;
+set = serialSetDialog(serials);
+s = serial(set{1,1});
+s.BaudRate = str2num(set{1,2});
+s.DataBits = str2num(set{1,3});
+s.Parity = set{1,4};
+s.StopBits = str2num(set{1,5});
+handles.serial = s;
+guidata(hObject,handles);
+% s.Terminator = set{1,6}
+
+
+
+
+% --------------------------------------------------------------------
+function pushtool_download_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_download (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if size(seriallist,2) == 0
+    msgbox('No port avaliable !');
+end
+try 
+    s = handles.serial;
+catch
+    serials = seriallist;
+    s = serial(serials{1,1});
+    s.BaudRate = 9600;
+    s.DataBits = 8;
+    s.Parity = 'None';
+    s.StopBits = 1;
+end
+
+generateTXT(hObject, eventdata, handles);
+
+handles = guidata(hObject);
+
+cur_index = 1;
+curve = handles.curve;
+axes(handles.axes_main);hold on;
+fclose(s);
+fopen(s);
+for curX = 0:0.1:handles.pointTable{end,1}
+    try
+        fprintf(s,'%s',[num2str(curve(cur_index,1),'%.3f'),' ']);
+    catch
+    end
+    plot(curX,curve(cur_index,1),'.g','MarkerSize',15);
+    drawnow;
+    %pause(0.2);
+    cur_index = cur_index + 1;
+end
+fclose(s);
+
+function generateTXT(hObject, eventdata, handles)
+if ~isfield(handles,'pointTable')
+    return
+end
+sep = 0.1;
+pointTable = handles.pointTable;
+curve = zeros(size(0:sep:pointTable{end,1},2),1);
+cur_index = 1;
+for curX = 0:sep:pointTable{end,1}
+     for i = 1:size(pointTable,1)
+        if curX <= pointTable{i,1}
+            row = i;
+            break;
+        end
+     end
+     if row == 1
+         preX = 0;preY = 0;
+     else
+         preX = pointTable{row-1,1};
+         preY = pointTable{row-1,2};
+     end
+     nextX = pointTable{row,1};
+     nextY = pointTable{row,2};
+    if strcmp(pointTable{row,3},'Linear')
+        curve(cur_index,1) = (curX-preX)*(nextY-preY)/(nextX-preX)+preY;
+    else
+        formular = pointTable{row,3};
+        f = inline(formular,'x');
+        x = curX;
+        try
+            y = feval(f,x) + preY - feval(f,preX);
+        catch
+            msgbox('formular error !');
+            return;
+        end
+        curve(cur_index,1) = y; 
+    end
+    cur_index = cur_index + 1;
+end
+handles.curve = curve; 
+guidata(hObject,handles);
+
+
+% --------------------------------------------------------------------
+function pushtoo_new_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtoo_new (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+axes(handles.axes_main);
+cla;
+set(handles.table_XY,'Data',[]);
+handles.pointTable ={};
+handles.Lines = [];
+handles.Points = [];
+handles.lineIndex = 1;
+handles.preX = 0;
+handles.preY =0;
+guidata(hObject,handles);
+
+
+
