@@ -1,0 +1,1165 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CurveGenerate</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-07"><meta name="DC.source" content="CurveGenerate.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> varargout = CurveGenerate(varargin)
+<span class="comment">% CURVEGENERATE MATLAB code for CurveGenerate.fig</span>
+<span class="comment">%      CURVEGENERATE, by itself, creates a new CURVEGENERATE or raises the existing</span>
+<span class="comment">%      singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      H = CURVEGENERATE returns the handle to a new CURVEGENERATE or the handle to</span>
+<span class="comment">%      the existing singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      CURVEGENERATE('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+<span class="comment">%      function named CALLBACK in CURVEGENERATE.M with the given input arguments.</span>
+<span class="comment">%</span>
+<span class="comment">%      CURVEGENERATE('Property','Value',...) creates a new CURVEGENERATE or raises the</span>
+<span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+<span class="comment">%      applied to the GUI before CurveGenerate_OpeningFcn gets called.  An</span>
+<span class="comment">%      unrecognized property name or invalid value makes property application</span>
+<span class="comment">%      stop.  All inputs are passed to CurveGenerate_OpeningFcn via varargin.</span>
+<span class="comment">%</span>
+<span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one</span>
+<span class="comment">%      instance to run (singleton)".</span>
+<span class="comment">%</span>
+<span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+
+<span class="comment">% Edit the above text to modify the response to help CurveGenerate</span>
+
+<span class="comment">% Last Modified by GUIDE v2.5 23-Sep-2018 13:50:46</span>
+
+<span class="comment">% Begin initialization code - DO NOT EDIT</span>
+gui_Singleton = 1;
+gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+                   <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+                   <span class="string">'gui_OpeningFcn'</span>, @CurveGenerate_OpeningFcn, <span class="keyword">...</span>
+                   <span class="string">'gui_OutputFcn'</span>,  @CurveGenerate_OutputFcn, <span class="keyword">...</span>
+                   <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+                   <span class="string">'gui_Callback'</span>,   []);
+<span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">else</span>
+    gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">end</span>
+<span class="comment">% End initialization code - DO NOT EDIT</span>
+
+
+
+
+<span class="comment">% --- Executes just before CurveGenerate is made visible.</span>
+<span class="keyword">function</span> CurveGenerate_OpeningFcn(hObject, eventdata, handles, varargin)
+<span class="comment">% This function has no output args, see OutputFcn.</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% varargin   command line arguments to CurveGenerate (see VARARGIN)</span>
+
+<span class="comment">% Choose default command line output for CurveGenerate</span>
+handles.output = hObject;
+
+<span class="comment">% Update handles structure</span>
+
+xlim([0 str2num(get(handles.e_Xmax,<span class="string">'String'</span>))]);
+ylim([0 str2num(get(handles.e_Ymax,<span class="string">'String'</span>))]);
+
+warning(<span class="string">'off'</span>,<span class="string">'MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame'</span>);
+jFrame=get(handle(handles.figure1), <span class="string">'javaframe'</span>);
+jicon=javax.swing.ImageIcon(<span class="string">'smart.png'</span>);
+jFrame.setFigureIcon(jicon);
+
+handles.lineIndex = 1;
+handles.pen_drawing = 0;
+guidata(hObject, handles);
+<span class="comment">% UIWAIT makes CurveGenerate wait for user response (see UIRESUME)</span>
+<span class="comment">% uiwait(handles.figure1);</span>
+
+
+<span class="comment">% --- Outputs from this function are returned to the command line.</span>
+<span class="keyword">function</span> varargout = CurveGenerate_OutputFcn(hObject, eventdata, handles)
+<span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Get default command line output from handles structure</span>
+varargout{1} = handles.output;
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> axes_main_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to axes_main (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: place code in OpeningFcn to populate axes_main</span>
+xlabel(<span class="string">'X'</span>);
+ylabel(<span class="string">'Y'</span>);
+grid <span class="string">on</span>;
+<span class="comment">%set(gcf, 'WindowButtonMotionFcn', @mouseMove);</span>
+
+
+
+<span class="comment">%title(gca, ['(X,Y) = (', num2str(C(1,1)), ', ',num2str(C(1,2)), ')']);</span>
+
+<span class="keyword">function</span> e_X_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_X (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of e_X as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of e_X as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> e_X_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_X (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> e_Y_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Y (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of e_Y as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of e_Y as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> e_Y_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Y (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+<span class="comment">% --- Executes on selection change in pop_F.</span>
+<span class="keyword">function</span> pop_F_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pop_F (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns pop_F contents as cell array</span>
+<span class="comment">%        contents{get(hObject,'Value')} returns selected item from pop_F</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> pop_F_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pop_F (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> table_XY_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to table_XY (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+set(hObject,<span class="string">'Data'</span>,[]);
+
+
+<span class="comment">% --- Executes on mouse motion over figure - except title and menu.</span>
+<span class="keyword">function</span> figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% C = get (gca, 'CurrentPoint');</span>
+<span class="comment">% set(handles.e_X,'String',num2str(C(1,1),'%.2f'));</span>
+<span class="comment">% set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));</span>
+
+<span class="comment">% --- Executes on mouse press over axes background.</span>
+<span class="keyword">function</span> axes_main_ButtonDownFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to axes_main (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+pen_drawing = handles.pen_drawing;
+type = get(gcf,<span class="string">'SelectionType'</span>);
+<span class="keyword">if</span> pen_drawing == 1
+    <span class="keyword">if</span> strcmp(type,<span class="string">'normal'</span>)
+        axes(handles.axes_main);hold <span class="string">on</span>;
+        X = str2num(get(handles.e_X,<span class="string">'String'</span>));
+        Y = str2num(get(handles.e_Y,<span class="string">'String'</span>));
+        <span class="keyword">try</span>
+            preX = handles.preX;
+            preY = handles.preY;
+        <span class="keyword">catch</span>
+            preX = 0;
+            preY = 0;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> X &gt;= preX
+            handles.preX = X;
+            handles.preY = Y;
+            handles.pointTable{handles.lineIndex,1} = X;
+            formular = get(handles.e_F,<span class="string">'String'</span>);
+            handles.pointTable{handles.lineIndex,3} = formular;
+            <span class="keyword">if</span> strcmp(formular,<span class="string">'Linear'</span>)
+                handles.Lines(handles.lineIndex,1) = plot([preX X],[preY Y],<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,<span class="string">'.r'</span>,<span class="string">'MarkerSize'</span>,15);
+            <span class="keyword">else</span>
+                f = inline(formular,<span class="string">'x'</span>);
+                x = [preX:0.1:X];
+                <span class="keyword">try</span>
+                    y = feval(f,x) + preY - feval(f,preX);
+                <span class="keyword">catch</span>
+                    msgbox(<span class="string">'formular error !'</span>);
+                    <span class="keyword">return</span>;
+                <span class="keyword">end</span>
+                Y = y(end);
+                handles.Lines(handles.lineIndex,1) = plot(x,y,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,<span class="string">'.r'</span>,<span class="string">'MarkerSize'</span>,15);
+            <span class="keyword">end</span>
+            handles.pointTable{handles.lineIndex,2} = Y;
+            handles.preY = Y;
+            handles.lineIndex = handles.lineIndex + 1;
+            set(handles.table_XY,<span class="string">'Data'</span>,handles.pointTable);
+
+            Xmax = str2num(get(handles.e_Xmax,<span class="string">'String'</span>));
+            <span class="keyword">if</span>  Xmax - X &lt;= 1
+                Xmax = Xmax + 5;
+                set(handles.e_Xmax,<span class="string">'String'</span>,num2str(Xmax));
+                xlim([0 Xmax]);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        guidata(hObject,handles);
+    <span class="keyword">elseif</span> strcmp(type,<span class="string">'alt'</span>) <span class="comment">% right click</span>
+        handles.pen_drawing = 0;
+        guidata(hObject,handles);
+    <span class="keyword">end</span>
+<span class="keyword">elseif</span> pen_drawing == 0
+    <span class="keyword">try</span>
+        pointTable = handles.pointTable;
+    <span class="keyword">catch</span>
+        <span class="keyword">return</span>;
+    <span class="keyword">end</span>
+    C = get(gca, <span class="string">'CurrentPoint'</span>);
+    curX = C(1,1);
+    <span class="keyword">for</span> i = 1:size(pointTable,1)
+        <span class="keyword">if</span> curX &lt;= pointTable{i,1}
+            row = i;
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    jUIScrollPane = findjobj(handles.table_XY);
+    jUITable = jUIScrollPane.getViewport.getView;
+    jUITable.changeSelection(row-1,0, false, false);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> e_Ymax_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Ymax (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of e_Ymax as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of e_Ymax as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> e_Ymax_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Ymax (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> e_Xmax_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Xmax (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of e_Xmax as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of e_Xmax as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> e_Xmax_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_Xmax (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+<span class="comment">% --- Executes when selected cell(s) is changed in table_XY.</span>
+<span class="keyword">function</span> table_XY_CellSelectionCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to table_XY (see GCBO)</span>
+<span class="comment">% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)</span>
+<span class="comment">%	Indices: row and column indices of the cell(s) currently selecteds</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="keyword">try</span>
+    delete(handles.curSel);
+<span class="keyword">catch</span>
+<span class="keyword">end</span>
+row = eventdata.Indices(1);
+axes(handles.axes_main);
+<span class="keyword">if</span> row ==1
+    starX = 0;starY = 0;
+<span class="keyword">else</span>
+    starX = handles.pointTable{row-1,1};
+    starY = handles.pointTable{row-1,2};
+<span class="keyword">end</span>
+endX = handles.pointTable{row,1};
+endY = handles.pointTable{row,2};
+formular = handles.pointTable{row,3};
+<span class="keyword">if</span> strcmp(formular,<span class="string">'Linear'</span>)
+    handles.curSel(1) = plot([starX endX],[starY endY],<span class="string">'-b'</span>,<span class="string">'LineWidth'</span>,1.5);
+<span class="keyword">else</span>
+    f = inline(formular,<span class="string">'x'</span>);
+    x = starX:0.1:endX;
+    <span class="keyword">try</span>
+        y = feval(f,x) + starY - feval(f,starX);
+    <span class="keyword">catch</span>
+        msgbox(<span class="string">'formular error !'</span>);
+        <span class="keyword">return</span>;
+    <span class="keyword">end</span>
+    handles.curSel(1) = plot(x,y,<span class="string">'b-'</span>,<span class="string">'LineWidth'</span>,1.5);
+<span class="keyword">end</span>
+handles.curSel(2) = plot(endX,endY,<span class="string">'.b'</span>,<span class="string">'MarkerSize'</span>,15);
+guidata(hObject,handles);
+
+
+
+
+<span class="keyword">function</span> e_F_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_F (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of e_F as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of e_F as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> e_F_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to e_F (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+<span class="comment">% --- Executes on button press in pb_autoYscale.</span>
+<span class="keyword">function</span> pb_autoYscale_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pb_autoYscale (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+axes(handles.axes_main);
+ylim <span class="string">auto</span>;
+y_lim = ylim;
+set(handles.e_Ymax,<span class="string">'String'</span>,num2str(y_lim(2),<span class="string">'%.2f'</span>));
+
+
+<span class="comment">% --------------------------------------------------------------------</span>
+<span class="keyword">function</span> pushtool_open_ClickedCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushtool_open (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+[file,path] = uigetfile(<span class="string">'*.mat'</span>);
+<span class="keyword">if</span> file == 0
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+load([path file]);
+set(handles.table_XY,<span class="string">'Data'</span>,tableData);
+update(hObject, eventdata, handles);
+pb_autoXYscale_Callback(hObject, eventdata, handles);
+
+<span class="keyword">function</span> update(hObject, eventdata, handles)
+tableData = get(handles.table_XY,<span class="string">'Data'</span>);
+handles.pointTable = tableData;
+handles.lineIndex = size(tableData,1) + 1;
+handles.preX = tableData{end,1};
+handles.preY = tableData{end,2};
+axes(handles.axes_main);cla;hold <span class="string">on</span>;
+<span class="keyword">for</span> i = 1:size(tableData,1)
+    formular = tableData{i,3};
+    <span class="keyword">if</span> i == 1
+        preX = 0; preY = 0;
+    <span class="keyword">else</span>
+        preX = tableData{i-1,1};
+        preY = tableData{i-1,2};
+    <span class="keyword">end</span>
+    X = tableData{i,1};
+    Y = tableData{i,2};
+    <span class="keyword">if</span> strcmp(formular,<span class="string">'Linear'</span>)
+        handles.Lines(i,1) = plot([preX X],[preY Y],<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,1.5);
+        handles.Points(i,1) = plot(X,Y,<span class="string">'.r'</span>,<span class="string">'MarkerSize'</span>,15);
+    <span class="keyword">else</span>
+        f = inline(formular,<span class="string">'x'</span>);
+        x = [preX:0.1:X];
+        <span class="keyword">try</span>
+            y = feval(f,x) + preY - feval(f,preX);
+        <span class="keyword">catch</span>
+            msgbox(<span class="string">'formular error !'</span>);
+            <span class="keyword">return</span>;
+        <span class="keyword">end</span>
+        Y = y(end);
+        handles.Lines(i,1) = plot(x,y,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,1.5);
+        handles.Points(i,1) = plot(X,Y,<span class="string">'.r'</span>,<span class="string">'MarkerSize'</span>,15);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+guidata(hObject,handles);
+
+
+
+<span class="comment">% --------------------------------------------------------------------</span>
+<span class="keyword">function</span> pushtool_save_ClickedCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushtool_save (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+[file,path] = uiputfile(<span class="string">'*.mat'</span>);
+<span class="keyword">if</span> file == 0
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+tableData = get(handles.table_XY,<span class="string">'Data'</span>);
+save([path file],<span class="string">'tableData'</span>);
+
+
+<span class="comment">% --- Executes on button press in pb_autoXYscale.</span>
+<span class="keyword">function</span> pb_autoXYscale_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pb_autoXYscale (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+axes(handles.axes_main);
+ylim <span class="string">auto</span>;
+xlim <span class="string">auto</span>;
+
+y_lim = ylim;
+x_lim = xlim;
+set(handles.e_Ymax,<span class="string">'String'</span>,num2str(y_lim(2),<span class="string">'%.2f'</span>));
+set(handles.e_Xmax,<span class="string">'String'</span>,num2str(x_lim(2),<span class="string">'%.2f'</span>));
+
+
+<span class="comment">% --------------------------------------------------------------------</span>
+<span class="keyword">function</span> pushtool_pen_ClickedCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushtool_pen (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% hObject    handle to pb_PEN (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+handles.pen_drawing = 1;
+<span class="comment">% handles.lineIndex = 1;</span>
+<span class="comment">% handles.poinTable = [];</span>
+guidata(hObject,handles);
+
+axes(handles.axes_main)
+hold <span class="string">on</span>;
+<span class="comment">% set(gcf,'pointer','watch');</span>
+iptPointerManager(gcf, <span class="string">'enable'</span>);
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, <span class="string">'Pointer'</span>, <span class="string">'watch'</span>));
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, <span class="string">'Pointer'</span>, <span class="string">'cross'</span>));
+
+set(handles.pushtool_confirm,<span class="string">'Visible'</span>,<span class="string">'On'</span>);
+<span class="keyword">while</span> handles.pen_drawing == 1
+    C = get(gca, <span class="string">'CurrentPoint'</span>);
+    curX = C(1,1);
+    curY = C(1,2);
+    x_lim = xlim;
+    y_lim = ylim;
+    <span class="keyword">if</span> curX &lt; x_lim(2) &amp;&amp; curX &gt; x_lim(1) &amp;&amp; curY &gt; y_lim(1) &amp;&amp; curY &lt; y_lim(2)
+        <span class="keyword">if</span> abs(curX-0.5*round(curX/0.5))&lt;0.03
+            curX = 0.5*round(curX/0.5);
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> abs(curY-0.5*round(curY/0.5))&lt;0.03
+            curY = 0.5*round(curY/0.5);
+        <span class="keyword">end</span>
+        set(handles.e_X,<span class="string">'String'</span>,num2str(curX,<span class="string">'%.2f'</span>));
+        set(handles.e_Y,<span class="string">'String'</span>,num2str(curY,<span class="string">'%.2f'</span>));
+    <span class="keyword">end</span>
+<span class="comment">%     try</span>
+<span class="comment">%         delete(handles.preLine);</span>
+<span class="comment">%     catch</span>
+<span class="comment">%     end</span>
+    <span class="keyword">try</span>
+        handles = guidata(hObject);
+        preX = handles.preX;
+        preY = handles.preY;
+    <span class="keyword">catch</span>
+        preX = 0;
+        preY = 0;
+    <span class="keyword">end</span>
+    <span class="comment">%handles.preLine = plot([preX curX],[preY curY],'r-','LineWidth',1.5);</span>
+    drawnow;
+    pause(0.2)
+    handles = guidata(hObject);
+<span class="keyword">end</span>
+
+<span class="comment">% set(gca,'pointer','cross');</span>
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, <span class="string">'Pointer'</span>, <span class="string">'arrow'</span>));
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, <span class="string">'Pointer'</span>, <span class="string">'arrow'</span>));
+
+
+<span class="comment">% --------------------------------------------------------------------</span>
+<span class="keyword">function</span> pushtool_confirm_ClickedCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushtool_confirm (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+handles.pen_drawing = 0;
+guidata(hObject,handles);
+set(hObject,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+
+
+
+<span class="comment">% --------------------------------------------------------------------</span>
+<span class="keyword">function</span> pushtool_setting_ClickedCallback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushtool_setting (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+set = serialSetDialog
+</pre><img vspace="5" hspace="5" src="CurveGenerate_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function varargout = CurveGenerate(varargin)
+% CURVEGENERATE MATLAB code for CurveGenerate.fig
+%      CURVEGENERATE, by itself, creates a new CURVEGENERATE or raises the existing
+%      singleton*.
+%
+%      H = CURVEGENERATE returns the handle to a new CURVEGENERATE or the handle to
+%      the existing singleton*.
+%
+%      CURVEGENERATE('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in CURVEGENERATE.M with the given input arguments.
+%
+%      CURVEGENERATE('Property','Value',...) creates a new CURVEGENERATE or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before CurveGenerate_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to CurveGenerate_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help CurveGenerate
+
+% Last Modified by GUIDE v2.5 23-Sep-2018 13:50:46
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @CurveGenerate_OpeningFcn, ...
+                   'gui_OutputFcn',  @CurveGenerate_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes just before CurveGenerate is made visible.
+function CurveGenerate_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to CurveGenerate (see VARARGIN)
+
+% Choose default command line output for CurveGenerate
+handles.output = hObject;
+
+% Update handles structure
+
+xlim([0 str2num(get(handles.e_Xmax,'String'))]);
+ylim([0 str2num(get(handles.e_Ymax,'String'))]);
+
+warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+jFrame=get(handle(handles.figure1), 'javaframe');
+jicon=javax.swing.ImageIcon('smart.png');
+jFrame.setFigureIcon(jicon);
+
+handles.lineIndex = 1;
+handles.pen_drawing = 0;
+guidata(hObject, handles);
+% UIWAIT makes CurveGenerate wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% REPLACE_WITH_DASH_DASH- Outputs from this function are returned to the command line.
+function varargout = CurveGenerate_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function axes_main_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to axes_main (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate axes_main
+xlabel('X');
+ylabel('Y');
+grid on;
+%set(gcf, 'WindowButtonMotionFcn', @mouseMove);
+
+
+
+%title(gca, ['(X,Y) = (', num2str(C(1,1)), ', ',num2str(C(1,2)), ')']);
+
+function e_X_Callback(hObject, eventdata, handles)
+% hObject    handle to e_X (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_X as text
+%        str2double(get(hObject,'String')) returns contents of e_X as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function e_X_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_X (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function e_Y_Callback(hObject, eventdata, handles)
+% hObject    handle to e_Y (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_Y as text
+%        str2double(get(hObject,'String')) returns contents of e_Y as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function e_Y_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_Y (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% REPLACE_WITH_DASH_DASH- Executes on selection change in pop_F.
+function pop_F_Callback(hObject, eventdata, handles)
+% hObject    handle to pop_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns pop_F contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from pop_F
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function pop_F_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pop_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function table_XY_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to table_XY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+set(hObject,'Data',[]);
+
+
+% REPLACE_WITH_DASH_DASH- Executes on mouse motion over figure - except title and menu.
+function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% C = get (gca, 'CurrentPoint');
+% set(handles.e_X,'String',num2str(C(1,1),'%.2f'));
+% set(handles.e_Y,'String',num2str(C(1,2),'%.2f'));
+
+% REPLACE_WITH_DASH_DASH- Executes on mouse press over axes background.
+function axes_main_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to axes_main (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+pen_drawing = handles.pen_drawing;
+type = get(gcf,'SelectionType');
+if pen_drawing == 1
+    if strcmp(type,'normal')
+        axes(handles.axes_main);hold on;
+        X = str2num(get(handles.e_X,'String'));
+        Y = str2num(get(handles.e_Y,'String'));
+        try
+            preX = handles.preX;
+            preY = handles.preY;
+        catch
+            preX = 0;
+            preY = 0;
+        end
+        if X >= preX    
+            handles.preX = X;
+            handles.preY = Y;
+            handles.pointTable{handles.lineIndex,1} = X;
+            formular = get(handles.e_F,'String');
+            handles.pointTable{handles.lineIndex,3} = formular;
+            if strcmp(formular,'Linear')
+                handles.Lines(handles.lineIndex,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);  
+            else
+                f = inline(formular,'x');
+                x = [preX:0.1:X];
+                try
+                    y = feval(f,x) + preY - feval(f,preX);
+                catch
+                    msgbox('formular error !');
+                    return;
+                end
+                Y = y(end);
+                handles.Lines(handles.lineIndex,1) = plot(x,y,'r-','LineWidth',1.5);
+                handles.Points(handles.lineIndex,1) = plot(X,Y,'.r','MarkerSize',15);  
+            end
+            handles.pointTable{handles.lineIndex,2} = Y;
+            handles.preY = Y;
+            handles.lineIndex = handles.lineIndex + 1;
+            set(handles.table_XY,'Data',handles.pointTable);
+            
+            Xmax = str2num(get(handles.e_Xmax,'String'));
+            if  Xmax - X <= 1
+                Xmax = Xmax + 5; 
+                set(handles.e_Xmax,'String',num2str(Xmax));
+                xlim([0 Xmax]);
+            end
+        end
+        guidata(hObject,handles);
+    elseif strcmp(type,'alt') % right click
+        handles.pen_drawing = 0;
+        guidata(hObject,handles);
+    end
+elseif pen_drawing == 0
+    try
+        pointTable = handles.pointTable;
+    catch
+        return;
+    end
+    C = get(gca, 'CurrentPoint');
+    curX = C(1,1);
+    for i = 1:size(pointTable,1)
+        if curX <= pointTable{i,1}
+            row = i;
+            break;
+        end
+    end
+    
+    jUIScrollPane = findjobj(handles.table_XY);
+    jUITable = jUIScrollPane.getViewport.getView;
+    jUITable.changeSelection(row-1,0, false, false);
+end
+
+
+
+function e_Ymax_Callback(hObject, eventdata, handles)
+% hObject    handle to e_Ymax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_Ymax as text
+%        str2double(get(hObject,'String')) returns contents of e_Ymax as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function e_Ymax_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_Ymax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function e_Xmax_Callback(hObject, eventdata, handles)
+% hObject    handle to e_Xmax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_Xmax as text
+%        str2double(get(hObject,'String')) returns contents of e_Xmax as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function e_Xmax_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_Xmax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% REPLACE_WITH_DASH_DASH- Executes when selected cell(s) is changed in table_XY.
+function table_XY_CellSelectionCallback(hObject, eventdata, handles)
+% hObject    handle to table_XY (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.CONTROL.TABLE)
+%	Indices: row and column indices of the cell(s) currently selecteds
+% handles    structure with handles and user data (see GUIDATA)
+try
+    delete(handles.curSel);
+catch
+end
+row = eventdata.Indices(1);
+axes(handles.axes_main);
+if row ==1
+    starX = 0;starY = 0;
+else
+    starX = handles.pointTable{row-1,1};
+    starY = handles.pointTable{row-1,2};
+end
+endX = handles.pointTable{row,1};
+endY = handles.pointTable{row,2};
+formular = handles.pointTable{row,3};
+if strcmp(formular,'Linear')
+    handles.curSel(1) = plot([starX endX],[starY endY],'-b','LineWidth',1.5);
+else
+    f = inline(formular,'x');
+    x = starX:0.1:endX;
+    try
+        y = feval(f,x) + starY - feval(f,starX);
+    catch
+        msgbox('formular error !');
+        return;
+    end
+    handles.curSel(1) = plot(x,y,'b-','LineWidth',1.5);
+end
+handles.curSel(2) = plot(endX,endY,'.b','MarkerSize',15);
+guidata(hObject,handles);
+
+
+
+
+function e_F_Callback(hObject, eventdata, handles)
+% hObject    handle to e_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of e_F as text
+%        str2double(get(hObject,'String')) returns contents of e_F as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function e_F_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to e_F (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% REPLACE_WITH_DASH_DASH- Executes on button press in pb_autoYscale.
+function pb_autoYscale_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_autoYscale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+axes(handles.axes_main);
+ylim auto;
+y_lim = ylim;
+set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function pushtool_open_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_open (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file,path] = uigetfile('*.mat');
+if file == 0
+    return;
+end
+load([path file]);
+set(handles.table_XY,'Data',tableData);
+update(hObject, eventdata, handles);
+pb_autoXYscale_Callback(hObject, eventdata, handles);
+
+function update(hObject, eventdata, handles)
+tableData = get(handles.table_XY,'Data');
+handles.pointTable = tableData;
+handles.lineIndex = size(tableData,1) + 1;
+handles.preX = tableData{end,1};
+handles.preY = tableData{end,2};
+axes(handles.axes_main);cla;hold on;
+for i = 1:size(tableData,1)
+    formular = tableData{i,3};
+    if i == 1
+        preX = 0; preY = 0;
+    else
+        preX = tableData{i-1,1};
+        preY = tableData{i-1,2};
+    end
+    X = tableData{i,1};
+    Y = tableData{i,2};
+    if strcmp(formular,'Linear')
+        handles.Lines(i,1) = plot([preX X],[preY Y],'r-','LineWidth',1.5);
+        handles.Points(i,1) = plot(X,Y,'.r','MarkerSize',15);  
+    else
+        f = inline(formular,'x');
+        x = [preX:0.1:X];
+        try
+            y = feval(f,x) + preY - feval(f,preX);
+        catch
+            msgbox('formular error !');
+            return;
+        end
+        Y = y(end);
+        handles.Lines(i,1) = plot(x,y,'r-','LineWidth',1.5);
+        handles.Points(i,1) = plot(X,Y,'.r','MarkerSize',15);  
+    end
+end
+guidata(hObject,handles);
+
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function pushtool_save_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_save (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[file,path] = uiputfile('*.mat');
+if file == 0
+    return;
+end
+tableData = get(handles.table_XY,'Data');
+save([path file],'tableData');
+
+
+% REPLACE_WITH_DASH_DASH- Executes on button press in pb_autoXYscale.
+function pb_autoXYscale_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_autoXYscale (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+axes(handles.axes_main);
+ylim auto;
+xlim auto;
+
+y_lim = ylim;
+x_lim = xlim;
+set(handles.e_Ymax,'String',num2str(y_lim(2),'%.2f'));
+set(handles.e_Xmax,'String',num2str(x_lim(2),'%.2f'));
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function pushtool_pen_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_pen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% hObject    handle to pb_PEN (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.pen_drawing = 1;
+% handles.lineIndex = 1;
+% handles.poinTable = [];
+guidata(hObject,handles);
+
+axes(handles.axes_main)
+hold on;
+% set(gcf,'pointer','watch');
+iptPointerManager(gcf, 'enable');
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'watch'));
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'cross'));
+
+set(handles.pushtool_confirm,'Visible','On');
+while handles.pen_drawing == 1
+    C = get(gca, 'CurrentPoint');
+    curX = C(1,1);
+    curY = C(1,2);
+    x_lim = xlim;
+    y_lim = ylim;
+    if curX < x_lim(2) && curX > x_lim(1) && curY > y_lim(1) && curY < y_lim(2)
+        if abs(curX-0.5*round(curX/0.5))<0.03
+            curX = 0.5*round(curX/0.5);
+        end
+        if abs(curY-0.5*round(curY/0.5))<0.03
+            curY = 0.5*round(curY/0.5);
+        end
+        set(handles.e_X,'String',num2str(curX,'%.2f'));
+        set(handles.e_Y,'String',num2str(curY,'%.2f'));
+    end
+%     try
+%         delete(handles.preLine);
+%     catch
+%     end
+    try
+        handles = guidata(hObject);
+        preX = handles.preX;
+        preY = handles.preY;
+    catch
+        preX = 0;
+        preY = 0;
+    end
+    %handles.preLine = plot([preX curX],[preY curY],'r-','LineWidth',1.5);
+    drawnow;
+    pause(0.2)
+    handles = guidata(hObject);
+end
+
+% set(gca,'pointer','cross');
+iptSetPointerBehavior(handles.axes_main, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
+iptSetPointerBehavior(handles.figure1, @(hFigure, currentPoint)set(hFigure, 'Pointer', 'arrow'));
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function pushtool_confirm_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_confirm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.pen_drawing = 0;
+guidata(hObject,handles);
+set(hObject,'Visible','off');
+
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function pushtool_setting_ClickedCallback(hObject, eventdata, handles)
+% hObject    handle to pushtool_setting (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set = serialSetDialog
+
+##### SOURCE END #####
+--></body></html>
